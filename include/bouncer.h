@@ -438,6 +438,8 @@ extern usec_t g_suspend_start;
 
 extern struct DNSContext *adns;
 
+extern int cf_cancel_homeless_backend;
+
 static inline PgSocket * _MUSTCHECK
 pop_socket(struct StatList *slist)
 {

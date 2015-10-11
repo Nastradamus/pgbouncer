@@ -138,6 +138,8 @@ int cf_log_disconnections;
 int cf_log_pooler_errors;
 int cf_application_name_add_host;
 
+int cf_cancel_homeless_backend;
+
 /*
  * config file description
  */
@@ -237,6 +239,7 @@ CF_ABS("log_connections", CF_INT, cf_log_connections, 0, "1"),
 CF_ABS("log_disconnections", CF_INT, cf_log_disconnections, 0, "1"),
 CF_ABS("log_pooler_errors", CF_INT, cf_log_pooler_errors, 0, "1"),
 CF_ABS("application_name_add_host", CF_INT, cf_application_name_add_host, 0, "0"),
+CF_ABS("cancel_homeless_backend", CF_INT, cf_cancel_homeless_backend, 0, "0"),
 {NULL}
 };
 
