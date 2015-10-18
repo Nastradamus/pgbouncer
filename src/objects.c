@@ -845,6 +845,9 @@ static void cancel_homeless_backend(PgSocket *server, PgSocket *client)
 	
 	/* send cancel request from new socket */
 	accept_cancel_request(new_socket);
+
+	/* add stats */
+	client->pool->stats.homeless_count++;
 }
 
 /* drop client connection */
@@ -853,7 +856,7 @@ void disconnect_client(PgSocket *client, bool notify, const char *reason, ...)
 	char buf[128];
 	va_list ap;
 	usec_t now = get_cached_time();
-	int do_cancel = 0;
+	bool hold_connection = false;
 
 	va_start(ap, reason);
 	vsnprintf(buf, sizeof(buf), reason, ap);
@@ -876,7 +879,7 @@ void disconnect_client(PgSocket *client, bool notify, const char *reason, ...)
 			} else {
 				/* cancel homeless PostgreSQL backend */
 				if (cf_cancel_homeless_backend == 1) {
-					do_cancel = 1;
+					hold_connection = true;
 					cancel_homeless_backend(server, client);
 				}
 
@@ -905,7 +908,7 @@ void disconnect_client(PgSocket *client, bool notify, const char *reason, ...)
 	/*
 	 * we don't want to free new 'cancel' connection for homeless client
 	*/
-	if (do_cancel != 1)
+	if (!hold_connection)
 		change_client_state(client, CL_JUSTFREE);
 
 	if (!sbuf_close(&client->sbuf))
